@@ -48,6 +48,7 @@ class CommitFile:
     filename: str
     changes: int
     patch: str
+    full_content: str # New property to store the full code instead of the patch only
 
 def create_message(files: list[CommitFile], instruction: str) -> list[tuple[str, str]]:
     """"Given a commit and initial instruction, creates a prompt from the IA
@@ -67,7 +68,19 @@ def create_message(files: list[CommitFile], instruction: str) -> list[tuple[str,
     # Save prompt for each file from the commit
     prompts = []
     for f in files:
-        file_prompt = f"{instruction}\n\nFile name: {f.filename}\nChanges: {f.changes}\nPatch (diff):\n{f.patch}\n\n{response_format}"      # Joins the prompt with the commit and the format intended
+        file_prompt = f"""{instruction}
+
+        File name: {f.filename}
+        Changes: {f.changes}
+
+        --- FULL FILE CONTENT FOR CONTEXT ---
+        {f.full_content}
+
+        --- EXACT PATCH (DIFF) ---
+        {f.patch}
+
+        {response_format}"""
+
         prompts.append((file_prompt, f.filename))
     
     return prompts
@@ -178,31 +191,77 @@ def call_model(provider: str, prompt: str, folder: Path, model: str | None = Non
     except Exception as e:
         print(f"Error calling model {model_name} or writing file {file_path}: {e}")
 
-def normalize_github_files(commit: Commit.Commit) -> list[CommitFile]:
+def normalize_github_files(commit: Commit.Commit, repo: Repository.Repository) -> list[CommitFile]:
     if commit is None:
         return []
     
-    return [
-        CommitFile(
-            filename=f.filename,
-            changes=f.changes,
-            patch=f.patch or ""
-        )
-        for f in commit.files
-    ]
+    IGNORE_DIRS = ['tests/', 'test/', 'docs/', '.github/', 'scripts/']
+    IGNORE_EXTS = ['.md', '.txt', '.yml', '.yaml', '.json', '.xml', '.csv']
+    files_data = []
 
-def normalize_gitlab_files(commit: ProjectCommit) -> list[CommitFile]:
+    for f in commit.files:
+        # We will ignore the commit if it is specific path, like tests or docs
+        if any(f"/{ignored}" in f"/{f.filename}" for ignored in IGNORE_DIRS):
+            continue
+            
+        # If it's not code, then we discart
+        if any(f.filename.endswith(ext) for ext in IGNORE_EXTS):
+            continue
+
+        try:
+            # We will get the file content at this exact commit
+            file_content = repo.get_contents(f.filename, ref=commit.sha).decoded_content.decode('utf-8')
+        except Exception:
+            # If it's a binary or deleted
+            file_content = "" 
+
+        files_data.append(
+            CommitFile(
+                filename=f.filename,
+                changes=f.changes,
+                patch=f.patch or "",
+                full_content=file_content
+            )
+        )
+    return files_data
+
+def normalize_gitlab_files(commit: ProjectCommit, project: Project) -> list[CommitFile]:
     if commit is None:
         return []
     
-    return [
-        CommitFile(
-            filename=f["new_path"],
-            changes=f["diff"].count("\n"),  # aproximação, gitlab não dá changes direto
-            patch=f["diff"] or ""
+    IGNORE_DIRS = ['tests/', 'test/', 'docs/', '.gitlab/', '.github', 'scripts/']
+    IGNORE_EXTS = ['.md', '.txt', '.yml', '.yaml', '.json', '.xml', '.csv']
+    files_data = []
+
+    for f in commit.diff():
+        filename = f["new_path"]
+        
+        # Ignore specific paths
+        if any(f"/{ignored}" in f"/{filename}" for ignored in IGNORE_DIRS):
+            continue
+            
+        # Ignore files that are not code
+        if any(filename.endswith(ext) for ext in IGNORE_EXTS):
+            continue
+
+        try:
+            # Retrieve the full file
+            raw_bytes = project.files.raw(file_path=filename, ref=commit.id)
+            file_content = raw_bytes.decode('utf-8')
+        except Exception:
+            # If the file is a binary 
+            file_content = ""
+
+        files_data.append(
+            CommitFile(
+                filename=filename,
+                changes=f["diff"].count("\n"),  # aproximação, gitlab não dá changes direto
+                patch=f["diff"] or "",
+                full_content=file_content
+            )
         )
-        for f in commit.diff()
-    ]
+        
+    return files_data
 
 def process_commit(row, prompt: str, models: list[str], g: Github, gl: Gitlab, repo_cache: dict[str, Repository.Repository | Project]) -> None:
 
@@ -226,13 +285,13 @@ def process_commit(row, prompt: str, models: list[str], g: Github, gl: Gitlab, r
         if commit is None:
             print(f"Commit '{sha}' not found in GitHub repository '{row.REPO_PATH}'")
             return
-        files = normalize_github_files(commit)
+        files = normalize_github_files(commit, repo_cache[row.REPO_PATH])
     elif is_gitlab:
         commit: ProjectCommit = fetch_gitlab_commit(row.REPO_PATH, sha, gl, repo_cache)
         if commit is None:
             print(f"Commit '{sha}' not found in GitLab repository '{row.REPO_PATH}'")
             return
-        files = normalize_gitlab_files(commit)
+        files = normalize_gitlab_files(commit, repo_cache[row.REPO_PATH])
     else:
         raise ValueError("Unsupported URL format")
 
