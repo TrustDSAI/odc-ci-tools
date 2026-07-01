@@ -10,6 +10,9 @@ from gitlab.v4.objects import Project, ProjectCommit
 
 from dataclasses import dataclass
 
+from openai import OpenAI
+import google.generativeai as genai
+
 import requests
 
 
@@ -69,44 +72,92 @@ def create_message(files: list[CommitFile], instruction: str) -> list[tuple[str,
     
     return prompts
 
-def call_model(model: str, prompt: str, folder: Path) -> None:
-    """Calls IA model via ollama, runs the specified prompt and stores the response in a text file
-    
-    Args:
-        model (str): The name of the IA model that will be run
-        prompt (str): The message that will be given to the IA
-        folder (Path): The folder where the text file will be stored in
-    """
-    
-    model_name: str = model.partition(":")[0]       # Take model name before ':' if present
-    file_path: Path = folder / f"{model_name}.txt"  # Creates the path to the text folder
-    metrics_path: Path = folder / "metrics.csv"  # Creates the path to the metrics text folder
-    
-    if file_path.exists():
-        return
-    
+def call_ollama(model_name: str, prompt: str) -> tuple[str, int, int]:
+    """Helper function to call ollama"""
     payload = {
-        "model": model,
+        "model": model_name,
         "messages": [{"role": "user", "content": prompt}],
         "stream": False,
         "options": {"temperature": 0.2}
     }
     
+    endpoint = os.getenv("OLLAMA_ENDPOINT", "http://localhost:11434/api/chat")
+    response = requests.post(endpoint, json=payload)
+    response.raise_for_status()
+    
+    data = response.json()
+    content = data["message"]["content"]
+    prompt_tokens = data.get("prompt_eval_count", 0)
+    completion_tokens = data.get("eval_count", 0)
+    
+    return content, prompt_tokens, completion_tokens
+
+def call_openai(model_name: str, prompt: str) -> tuple[str, int, int]:
+    """Helper function to call openai API"""
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    response = client.chat.completions.create(
+        model=model_name,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.2,
+        stream=False
+    )
+    
+    content = response.choices[0].message.content
+    # Metrics extraction
+    prompt_tokens = response.usage.prompt_tokens
+    completion_tokens = response.usage.completion_tokens
+    
+    return content, prompt_tokens, completion_tokens
+
+def call_gemini(model_name: str, prompt: str) -> tuple[str, int, int]:
+    """Helper function to call gemini API"""
+    genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+    
+    # Temperatura defining
+    config = genai.types.GenerationConfig(temperature=0.2)
+    model = genai.GenerativeModel(model_name)
+    
+    response = model.generate_content(prompt, generation_config=config)
+    
+    content = response.text
+    # Metrics extraction
+    prompt_tokens = response.usage_metadata.prompt_token_count
+    completion_tokens = response.usage_metadata.candidates_token_count
+    
+    return content, prompt_tokens, completion_tokens
+
+def call_model(provider: str, prompt: str, folder: Path, model: str | None = None) -> None:
+    """Calls IA model via determinated provider, runs the specified prompt and stores the response in a text file
+    
+    Args:
+        provider (str): The AI provider (for now, 'openai', 'gemini', 'ollama')
+        prompt (str): The message that will be given to the IA
+        folder (Path): The folder where the text file will be stored in
+        model (str): The name of the IA model that will be run.
+    """
+    
+    # If model is none, we use the provider (just because ollama needs)
+    model_name = model if model else provider
+    
+    file_path: Path = folder / f"{model_name}.txt"
+    metrics_path: Path = folder / "metrics.csv"
+    
+    if file_path.exists():
+        return
+    
     try:
-        # Calls the model and measures the time taken for the response
         start = time.perf_counter()
-        response = requests.post(
-            os.getenv("CHAT_ENDPOINT"), 
-            json=payload,
-            auth=requests.auth.HTTPBasicAuth(os.getenv("CHAT_API_NAME"), os.getenv("CHAT_API_PASSWORD")),
-        )
-        response.raise_for_status()  # Raises an HTTPError if the response was an error
-        elapsed = time.perf_counter() - start
         
-        data = response.json()
-        content = data["message"]["content"]
-        prompt_eval_count = data.get("prompt_eval_count", 0)
-        response_eval_count = data.get("eval_count", 0)
+        if provider == "openai":
+            content, prompt_eval_count, response_eval_count = call_openai(model_name, prompt)
+        elif provider == "gemini":
+            content, prompt_eval_count, response_eval_count = call_gemini(model_name, prompt)
+        elif provider == "ollama":
+            content, prompt_eval_count, response_eval_count = call_ollama(model_name, prompt)
+        else:
+            raise ValueError(f"Provider not found: {provider}")
+            
+        elapsed = time.perf_counter() - start
         
         file_path.write_text(content, encoding="utf-8")
         
@@ -117,7 +168,7 @@ def call_model(model: str, prompt: str, folder: Path) -> None:
                 writer.writerow(["Model", "Elapsed Time (seconds)", "Prompt Tokens", "Response Tokens", "Total Tokens"])
             
             writer.writerow([
-                model, 
+                model_name, 
                 round(elapsed, 3),
                 prompt_eval_count, 
                 response_eval_count, 
@@ -125,7 +176,7 @@ def call_model(model: str, prompt: str, folder: Path) -> None:
             ])
             
     except Exception as e:
-        print(f"Error calling model {model} or writing file {file_path}: {e}")
+        print(f"Error calling model {model_name} or writing file {file_path}: {e}")
 
 def normalize_github_files(commit: Commit.Commit) -> list[CommitFile]:
     if commit is None:
@@ -191,5 +242,15 @@ def process_commit(row, prompt: str, models: list[str], g: Github, gl: Gitlab, r
         safe_name = file_name.replace("/", "-").replace(".", "_")
         file_dir: Path = sha_dir / safe_name
         file_dir.mkdir(parents=True, exist_ok=True)
+        # If we want to use a provider like openAI or genAi, we just have to define provider as "openai" or "gemini"
+        # If we want to use ollama as our provider, provider should be ollama and model should be the model to use.
+        provider = "ollama"
+        #provider = "gemini"
+        #provider = "openai"
         for model in models:
-            call_model(model, message, file_dir)
+            call_model(
+                provider=provider,
+                prompt=message,
+                folder=file_dir,
+                model=model,
+                )
