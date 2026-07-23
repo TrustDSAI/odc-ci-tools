@@ -1,4 +1,5 @@
 from pathlib import Path
+from datetime import datetime
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -35,10 +36,12 @@ for file_path in tqdm(files, desc="Processing files", unit=" files"):     # For 
 
 df_predicted = pd.DataFrame(data)          # Create DataFrame
 
-script_dir = Path(__file__).parent      # Get the folder where this file is located (src/)
-data_dir = script_dir.parent / "data"   # Goes up one level and joins with data folder
-data_dir.mkdir(parents=True, exist_ok=True)
-output_path = data_dir / "output.csv"
+base_output_dir = Path("/hdd/josep/tdsai-odc-output")
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+output_dir = base_output_dir / timestamp
+output_dir.mkdir(parents=True, exist_ok=True)
+
+output_path = output_dir / "output.csv"
 
 try:
     df_predicted.to_csv(output_path, index=False, encoding="utf-8")    # Export DataFrame to CSV
@@ -59,7 +62,7 @@ for df in count_matches(df_real, df_predicted):
     print(df)
 
 for category in ["Defect Type", "Defect Qualifier", ["Defect Type", "Defect Qualifier"]]:
-    create_confusion_matrix(df_real, df_predicted, category)
-    create_confusion_matrix(df_real, df_predicted, category, only_one_classification=True)
+    create_confusion_matrix(df_real, df_predicted, category, output_dir)
+    create_confusion_matrix(df_real, df_predicted, category, output_dir, only_one_classification=True)
 
 plt.show()

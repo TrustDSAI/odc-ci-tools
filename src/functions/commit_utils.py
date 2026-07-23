@@ -3,10 +3,12 @@ import os
 from pathlib import Path
 import time
 
+
 from github import Commit, Github, GithubException, Repository
 from gitlab import Gitlab
 from gitlab.exceptions import GitlabGetError
 from gitlab.v4.objects import Project, ProjectCommit
+
 
 from dataclasses import dataclass
 
@@ -195,7 +197,7 @@ def normalize_github_files(commit: Commit.Commit, repo: Repository.Repository) -
     if commit is None:
         return []
     
-    IGNORE_DIRS = ['tests/', 'test/', 'docs/', '.github/', 'scripts/']
+    IGNORE_DIRS = ['resources/', 'tests/', 'test/', 'docs/', '.github/', 'scripts/']
     IGNORE_EXTS = ['.md', '.txt', '.yml', '.yaml', '.json', '.xml', '.csv']
     files_data = []
 
@@ -229,7 +231,7 @@ def normalize_gitlab_files(commit: ProjectCommit, project: Project) -> list[Comm
     if commit is None:
         return []
     
-    IGNORE_DIRS = ['tests/', 'test/', 'docs/', '.gitlab/', '.github', 'scripts/']
+    IGNORE_DIRS = ['resources/', 'tests/', 'test/', 'docs/', '.gitlab/', '.github', 'scripts/']
     IGNORE_EXTS = ['.md', '.txt', '.yml', '.yaml', '.json', '.xml', '.csv']
     files_data = []
 
@@ -263,11 +265,7 @@ def normalize_gitlab_files(commit: ProjectCommit, project: Project) -> list[Comm
         
     return files_data
 
-def process_commit(row, prompt: str, models: list[str], g: Github, gl: Gitlab, repo_cache: dict[str, Repository.Repository | Project]) -> None:
-
-    root_dir = Path(__file__).parent.parent.parent  # Get the root folder
-    output_dir = root_dir / "trustdev-output"                # Joins with output directory
-    output_dir.mkdir(parents=True, exist_ok=True)
+def process_commit(row, prompt: str, models: list[str], g: Github, gl: Gitlab, repo_cache: dict[str, Repository.Repository | Project], output_dir: Path) -> None:
 
     repo_dir = output_dir / row.REPO_PATH.replace("/", "-")   # Creates a directory for the repository, replacing '/' with '-' to avoid issues in folder names
     repo_dir.mkdir(parents=True, exist_ok=True)

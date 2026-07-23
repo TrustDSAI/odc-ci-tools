@@ -190,7 +190,7 @@ def count_matches(df_real: pd.DataFrame, df_predicted: pd.DataFrame) -> list[pd.
     
     return dataframes
 
-def create_confusion_matrix(df_real: pd.DataFrame, df_predicted: pd.DataFrame, category: str | list[str], only_one_classification: bool = False) -> pd.DataFrame:
+def create_confusion_matrix(df_real: pd.DataFrame, df_predicted: pd.DataFrame, category: str | list[str], output_dir: Path, only_one_classification: bool = False,) -> pd.DataFrame:
     """Creates a confusion matrix comparing human and IA classifications for a given category.
     
     Args:
@@ -285,18 +285,19 @@ def create_confusion_matrix(df_real: pd.DataFrame, df_predicted: pd.DataFrame, c
         all_cf.append((ia_model, df_cf))
     
     # Create directories and save metrics and confusion matrices
-    root_dir = Path(__file__).parent.parent.parent  # Get the root folder
-    data_dir = root_dir / "data"                    # Joins with data directory
-    metrics_dir = data_dir / "metrics"
-    cf_dir = data_dir / "confusion_matrices"
+    metrics_dir = output_dir / "metrics"
+    cf_dir = output_dir / "confusion_matrices"
+    
     if (only_one_classification):
         metrics_dir = metrics_dir / "unique"
         cf_dir = cf_dir / "unique"
     else:
         metrics_dir = metrics_dir / "non_unique"
         cf_dir = cf_dir / "non_unique"
+        
     metrics_dir.mkdir(parents=True, exist_ok=True)
     cf_dir.mkdir(parents=True, exist_ok=True)
+    
     metrics_path = metrics_dir / f"{combined}.csv"
     cf_path = cf_dir / f"{combined}_confusion_matrices.txt"
 
