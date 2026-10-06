@@ -1,0 +1,23 @@
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+
+# Folders
+output/
+out/
+test/
+
+# Files
+*.csv
+*.xlsx
+*.txt
+prompt.txt
+
+# Virtual Environment
+.venv/
+
+# IDE specific files
+.vscode/
+
+# Environment variables file
+.env
