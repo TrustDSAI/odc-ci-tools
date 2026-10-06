@@ -1,6 +1,6 @@
 import csv
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import time
 
 from github import Commit, Github, GithubException, Repository
@@ -12,6 +12,26 @@ from dataclasses import dataclass
 
 import requests
 
+IGNORED_DIRS: set[str] = {
+    "docs", "doc", "documentation", "examples", "example",
+    "test", "tests", "testdata", "fixtures", "vendor", "node_modules",
+}
+
+IGNORED_EXTENSIONS: set[str] = {
+    # documentação
+    ".md", ".rst", ".txt", ".adoc",
+    # imagens e media
+    ".png", ".jpg", ".jpeg", ".gif", ".svg", ".ico", ".pdf",
+    # config e dados
+    ".json", ".lock", ".csv",
+    # gerados
+    ".min.js", ".map",
+}
+
+IGNORED_FILENAMES: set[str] = {
+    "license", "licence", "changelog", "changes", "authors", "readme",
+    "go.sum", "package-lock.json", "yarn.lock",
+}
 
 # main.py 
 def fetch_github_commit(repo_url: str, sha: str, g: Github, repo_cache: dict[str, Repository.Repository]) -> Commit.Commit | None:
@@ -162,14 +182,14 @@ def call_model(provider: str, model: str, prompt: str, folder: Path) -> None:
 def normalize_github_files(commit: Commit.Commit) -> list[CommitFile]:
     if commit is None:
         return []
-    
+
     return [
         CommitFile(
             filename=f.filename,
             changes=f.changes,
-            patch=f.patch or ""
-        )
+            patch=f.patch or "")
         for f in commit.files
+        if not should_ignore_file(f.filename)
     ]
 
 from gitlab.exceptions import GitlabGetError
@@ -188,38 +208,33 @@ def normalize_gitlab_files(commit: ProjectCommit) -> list[CommitFile]:
     return [
         CommitFile(
             filename=f["new_path"],
-            # Prevenção: caso f["diff"] venha a None, não dá erro ao contar os "\n"
             changes=f["diff"].count("\n") if f.get("diff") else 0,
             patch=f.get("diff") or ""
         )
         for f in diffs
+        if not should_ignore_file(f["new_path"])
     ]
 
 def process_commit(row, provider: str, prompt: str, models: list[str], g: Github, gl: Gitlab, repo_cache: dict[str, Repository.Repository | Project], run_id: str) -> None:
 
-    root_dir = Path(__file__).parent.parent.parent  # Get the root folder
-    output_dir = root_dir / "trustdev-output" / run_id  # Joins with output directory
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    repo_dir = output_dir / row.REPO_PATH.replace("/", "-")   # Creates a directory for the repository, replacing '/' with '-' to avoid issues in folder names
-    repo_dir.mkdir(parents=True, exist_ok=True)
+    root_dir = Path(__file__).parent.parent.parent
+    output_dir = root_dir / "trustdev-output" / run_id
+    repo_dir = output_dir / row.REPO_PATH.replace("/", "-")
 
     sha: str = row.P_COMMIT
-    sha_dir: Path = repo_dir / sha            # Directory's path to save IA's response
-    sha_dir.mkdir(parents=True, exist_ok=True)  # Creates the directory if it doesn't exist; parents=True creates every needed parent directory if it doesn't exist; exist_ok=True doesn't give a error if the directory already exists
-    
+    sha_dir: Path = repo_dir / sha
+
     is_github = row.PLATFORM == "github"
     is_gitlab = row.PLATFORM == "gitlab"
-    
-    # Create prompt for the IA
+
     if is_github:
-        commit: Commit.Commit = fetch_github_commit(row.REPO_PATH, sha, g, repo_cache)
+        commit = fetch_github_commit(row.REPO_PATH, sha, g, repo_cache)
         if commit is None:
             print(f"Commit '{sha}' not found in GitHub repository '{row.REPO_PATH}'")
             return
         files = normalize_github_files(commit)
     elif is_gitlab:
-        commit: ProjectCommit = fetch_gitlab_commit(row.REPO_PATH, sha, gl, repo_cache)
+        commit = fetch_gitlab_commit(row.REPO_PATH, sha, gl, repo_cache)
         if commit is None:
             print(f"Commit '{sha}' not found in GitLab repository '{row.REPO_PATH}'")
             return
@@ -228,10 +243,28 @@ def process_commit(row, provider: str, prompt: str, models: list[str], g: Github
         raise ValueError("Unsupported URL format")
 
     content = create_message(files, prompt)
-    
+
+    if not content:
+        print(f"Commit '{sha}' ({row.REPO_PATH}): no files left to classify after filtering, skipping.")
+        return
+
     for message, file_name in content:
         safe_name = file_name.replace("/", "-").replace(".", "_")
         file_dir: Path = sha_dir / safe_name
-        file_dir.mkdir(parents=True, exist_ok=True)
+        file_dir.mkdir(parents=True, exist_ok=True) 
         for model in models:
             call_model(provider, model, message, file_dir)
+
+def should_ignore_file(filename: str) -> bool:
+    """Returns True if the file is not source code worth classifying (docs, assets, lockfiles...)."""
+    path = PurePosixPath(filename.lower())
+
+    if any(part in IGNORED_DIRS for part in path.parts[:-1]):
+        return True
+
+    if path.name in IGNORED_FILENAMES:
+        return True
+    if path.suffix in {"", ".md", ".rst", ".txt"} and path.stem in IGNORED_FILENAMES:
+        return True
+
+    return any(path.name.endswith(ext) for ext in IGNORED_EXTENSIONS)

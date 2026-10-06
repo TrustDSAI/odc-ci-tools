@@ -18,9 +18,9 @@ provider = "openai"
 # IA Models Used
 models = [
     "gpt-5-nano",
-    "gpt-5.4-nano",
-    "gpt-5.6-luna",
-    "gpt-5-mini"
+    #"gpt-5.4-nano",
+    #"gpt-5.6-luna",
+    #"gpt-5-mini"
 
 ]
 
