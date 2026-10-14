@@ -10,27 +10,48 @@ from gitlab.v4.objects import Project, ProjectCommit
 
 from dataclasses import dataclass
 
+from functions.vertex_client import VertexClient, VertexError
+import random
+import time
 import requests
 
+_vertex_client = None
+
 IGNORED_DIRS: set[str] = {
+    # Tests and Examples
     "docs", "doc", "documentation", "examples", "example",
-    "test", "tests", "testdata", "fixtures", "vendor", "node_modules",
+    "test", "tests", "testdata", "fixtures", "mocks", "stubs", "e2e",
+    # Dependencies and Virtual Environments (kept venv, removed env for credential leak scanning)
+    "vendor", "node_modules", "venv", ".venv",
+    # Build, Output and Cache
+    "build", "dist", "out", "target", "bin", "obj", "__pycache__", ".cache",
+    # Version Control and IDEs
+    ".git", ".svn", ".vscode", ".idea", "packages"
 }
 
 IGNORED_EXTENSIONS: set[str] = {
-    # documentação
+    # Documentation
     ".md", ".rst", ".txt", ".adoc",
-    # imagens e media
-    ".png", ".jpg", ".jpeg", ".gif", ".svg", ".ico", ".pdf",
-    # config e dados
+    # Images, Media and Fonts
+    ".png", ".jpg", ".jpeg", ".gif", ".svg", ".ico", ".pdf", 
+    ".woff", ".woff2", ".ttf", ".eot", ".mp3", ".mp4", ".wav",
+    # Config and Data
     ".json", ".lock", ".csv",
-    # gerados
-    ".min.js", ".map",
+    # Generated and Compiled/Binaries
+    ".min.js", ".map", ".pyc", ".class", ".jar", ".war", 
+    ".exe", ".dll", ".so", ".dylib", ".o", ".a",
+    # Logs and IDEs
+    ".log", ".iml", ".sln", ".csproj"
 }
 
 IGNORED_FILENAMES: set[str] = {
-    "license", "licence", "changelog", "changes", "authors", "readme",
-    "go.sum", "package-lock.json", "yarn.lock",
+    # Legal and Meta
+    "license", "licence", "changelog", "changes", "authors", "readme", 
+    "contributing", "code_of_conduct", "security",
+    # Dependency Manifests (Ignore if ODC focuses strictly on application logic)
+    "go.sum", "package-lock.json", "yarn.lock", "pom.xml", "build.gradle", "requirements.txt",
+    # Linters and Git configs
+    ".gitignore", ".dockerignore", ".eslintignore", ".prettierrc"
 }
 
 # main.py 
@@ -130,12 +151,28 @@ def call_openai(model: str, prompt: str) -> tuple[str, int, int]:
 
     return content, prompt_tokens, completion_tokens
 
+def call_vertexai(model: str, prompt: str) -> tuple[str, int, int]:
+    """Calls the Google Cloud Vertex AI API and returns (content, prompt_tokens, response_tokens)"""
+    global _vertex_client
+    if _vertex_client is None:
+        _vertex_client = VertexClient()
+    
+    response = _vertex_client.chat(
+        model=model,
+        messages=[{"role": "user", "content": prompt}]
+    )
+    
+    content = response["text"]
+    prompt_tokens = response["usage"]["input_tokens"]
+    completion_tokens = response["usage"]["output_tokens"]
+    
+    return content, prompt_tokens, completion_tokens
+
 
 def call_model(provider: str, model: str, prompt: str, folder: Path) -> None:
-    """Calls an IA model via the given provider, runs the specified prompt and stores the response in a text file
+    """Calls an IA model via the given models and provider, runs the specified prompt and stores the response in a text file
     
     Args:
-        provider (str): The AI provider to use ('ollama' or 'openai')
         model (str): The name of the IA model that will be run
         prompt (str): The message that will be given to the IA
         folder (Path): The folder where the text file will be stored in
@@ -155,6 +192,8 @@ def call_model(provider: str, model: str, prompt: str, folder: Path) -> None:
             content, prompt_eval_count, response_eval_count = call_ollama_endpoint(model, prompt)
         elif provider == "openai":
             content, prompt_eval_count, response_eval_count = call_openai(model, prompt)
+        elif provider == "vertexai":
+            content, prompt_eval_count, response_eval_count = call_vertexai(model, prompt)
         else:
             raise ValueError(f"Provider not found: {provider}")
 
@@ -215,7 +254,7 @@ def normalize_gitlab_files(commit: ProjectCommit) -> list[CommitFile]:
         if not should_ignore_file(f["new_path"])
     ]
 
-def process_commit(row, provider: str, prompt: str, models: list[str], g: Github, gl: Gitlab, repo_cache: dict[str, Repository.Repository | Project], run_id: str) -> None:
+def process_commit(row, prompt: str, models: dict[str, list[str]], g: Github, gl: Gitlab, repo_cache: dict[str, Repository.Repository | Project], run_id: str) -> None:
 
     root_dir = Path(__file__).parent.parent.parent
     output_dir = root_dir / "trustdev-output" / run_id
@@ -252,8 +291,14 @@ def process_commit(row, provider: str, prompt: str, models: list[str], g: Github
         safe_name = file_name.replace("/", "-").replace(".", "_")
         file_dir: Path = sha_dir / safe_name
         file_dir.mkdir(parents=True, exist_ok=True) 
-        for model in models:
-            call_model(provider, model, message, file_dir)
+        
+        for provider, model_list in models.items():
+            for model in model_list:
+
+                if provider == "vertexai":
+                    time.sleep(random.uniform(0.5, 2.5))
+
+                call_model(provider, model, message, file_dir)
 
 def should_ignore_file(filename: str) -> bool:
     """Returns True if the file is not source code worth classifying (docs, assets, lockfiles...)."""
