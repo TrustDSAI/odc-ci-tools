@@ -1,0 +1,3 @@
+go.sum  
+Defect Type: Interface  
+Defect Qualifier: Incorrect

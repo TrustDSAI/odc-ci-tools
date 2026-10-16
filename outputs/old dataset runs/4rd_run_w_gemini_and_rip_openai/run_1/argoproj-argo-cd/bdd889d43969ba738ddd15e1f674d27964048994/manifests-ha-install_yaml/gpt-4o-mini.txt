@@ -1,0 +1,44 @@
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Missing  
+
+Defect Type: Checking  
+Defect Qualifier: Incorrect  
+
+Defect Type: Function  
+Defect Qualifier: Incorrect  
+
+Defect Type: Interface  
+Defect Qualifier: Missing  
+
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Incorrect  
+
+Defect Type: Algorithm/Method  
+Defect Qualifier: Incorrect  
+
+Defect Type: Checking  
+Defect Qualifier: Incorrect  
+
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Missing  
+
+Defect Type: Checking  
+Defect Qualifier: Incorrect  
+
+Defect Type: Function  
+Defect Qualifier: Incorrect  
+
+Defect Type: Checking  
+Defect Qualifier: Incorrect  
+
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Missing  
+
+Defect Type: Function  
+Defect Qualifier: Incorrect  
+
+Defect Type: Algorithm/Method  
+Defect Qualifier: Incorrect  
+
+Defect Type: Interface  
+Defect Qualifier: Missing  

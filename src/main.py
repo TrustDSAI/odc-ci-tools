@@ -30,32 +30,32 @@ prompt = "A defect type can be one of the following categories: 1) Assignment/In
 
 models = {
     "vertexai": [
-        #"gemini-3.8-flash-cyber",
+    #     #"gemini-3.8-flash-cyber",
         "gemini-3.8-flash",
-        #"gemini-3.7-flash",
-        "gemini-3.5-flash",
-        "gemini-3.5-flash-lite",
-        "gemini-3.1-flash-lite",
-        "gemini-2.5-flash-lite",
-        "gemini-2.5-flash",
-        "gemini-2.5-pro"
+    #     #"gemini-3.7-flash",
+    #     "gemini-3.5-flash",
+    #     "gemini-3.5-flash-lite",
+    #     "gemini-3.1-flash-lite",
+    #     "gemini-2.5-flash-lite",
+    #     "gemini-2.5-flash",
+    #     #"gemini-2.5-pro"
     ],
     "openai": [
-        "gpt-5.4-mini",
-        "gpt-5.4-nano",
-        "gpt-5-mini",
-        "gpt-5-nano",
-        "gpt-4.1-mini",
-        "gpt-4.1-nano",
-        "gpt-4o-mini",
-        "o3-mini",
-        "o4-mini",
+        #"gpt-5.4-mini",
+        # "gpt-5.4-nano",
+         "gpt-5-mini",
+        # "gpt-5-nano",
+        # "gpt-4.1-mini",
+        # "gpt-4.1-nano",
+        # "gpt-4o-mini",
+        # "o3-mini",
+        # "o4-mini",
     ]
 }
 
 NUM_RUNS = 5
 
-df_real = csv_reader("cves_merged")
+df_real = csv_reader("dataset_cve")
 repo_cache: dict[str, Repository.Repository | Project] = {}
 
 load_dotenv()

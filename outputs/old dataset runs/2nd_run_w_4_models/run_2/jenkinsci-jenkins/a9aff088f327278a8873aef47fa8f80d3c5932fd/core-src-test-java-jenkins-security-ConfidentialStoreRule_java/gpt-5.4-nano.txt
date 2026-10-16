@@ -1,0 +1,3 @@
+File: core/src/test/java/jenkins/security/ConfidentialStoreRule.java  
+Defect Type: Interface  
+Defect Qualifier: Missing

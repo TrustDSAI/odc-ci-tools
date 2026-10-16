@@ -1,0 +1,5 @@
+Model,Elapsed Time (seconds),Prompt Tokens,Response Tokens,Total Tokens
+gpt-5-nano,17.798,579,1877,2456
+gpt-5.4-nano,0.69,579,15,594
+gpt-5.6-luna,2.619,579,149,728
+gpt-5-mini,5.727,579,343,922

@@ -1,0 +1,8 @@
+Model,Elapsed Time (seconds),Prompt Tokens,Response Tokens,Total Tokens
+gemini-3.8-flash,6.38,1529,670,2199
+gemini-3.5-flash,4.963,1529,824,2353
+gemini-3.5-flash-lite,0.988,1529,11,1540
+gemini-3.1-flash-lite,23.098,1529,11,1540
+gemini-2.5-flash-lite,0.546,1529,13,1542
+gemini-2.5-flash,132.126,1529,2961,4490
+gemini-2.5-pro,13.161,1529,1047,2576

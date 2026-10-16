@@ -1,0 +1,28 @@
+Confusion Matrix for gpt-5.4-nano
+            Extraneous  Incorrect  Missing  Other
+Extraneous           0          0        0      2
+Incorrect            0          0        0     55
+Missing              0          0        0     53
+Other                0          0        0      0
+
+Confusion Matrix for gpt-5.6-luna
+            Extraneous  Incorrect  Missing  Other
+Extraneous           0          0        0      2
+Incorrect            0          0        0     55
+Missing              0          0        0     53
+Other                0          0        0      0
+
+Confusion Matrix for gpt-5-nano
+            Extraneous  Incorrect  Missing  Other
+Extraneous           0          0        0      2
+Incorrect            0          0        0     55
+Missing              0          0        0     53
+Other                0          0        0      0
+
+Confusion Matrix for gpt-5-mini
+            Extraneous  Incorrect  Missing  Other
+Extraneous           0          0        0      2
+Incorrect            0          0        0     55
+Missing              0          0        0     53
+Other                0          0        0      0
+

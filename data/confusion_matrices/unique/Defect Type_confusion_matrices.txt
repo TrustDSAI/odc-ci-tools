@@ -1,0 +1,36 @@
+Confusion Matrix for gpt-5.4-nano
+                           Algorithm/Method  Assignment/Initialization  Checking  Function  Interface  Other
+Algorithm/Method                          0                          0         0         0          0     33
+Assignment/Initialization                 0                          0         0         0          0     18
+Checking                                  0                          0         0         0          0     51
+Function                                  0                          0         0         0          0      1
+Interface                                 0                          0         0         0          0      7
+Other                                     0                          0         0         0          0      0
+
+Confusion Matrix for gpt-5.6-luna
+                           Algorithm/Method  Assignment/Initialization  Checking  Function  Interface  Other
+Algorithm/Method                          0                          0         0         0          0     33
+Assignment/Initialization                 0                          0         0         0          0     18
+Checking                                  0                          0         0         0          0     51
+Function                                  0                          0         0         0          0      1
+Interface                                 0                          0         0         0          0      7
+Other                                     0                          0         0         0          0      0
+
+Confusion Matrix for gpt-5-nano
+                           Algorithm/Method  Assignment/Initialization  Checking  Function  Interface  Other
+Algorithm/Method                          0                          0         0         0          0     33
+Assignment/Initialization                 0                          0         0         0          0     18
+Checking                                  0                          0         0         0          0     51
+Function                                  0                          0         0         0          0      1
+Interface                                 0                          0         0         0          0      7
+Other                                     0                          0         0         0          0      0
+
+Confusion Matrix for gpt-5-mini
+                           Algorithm/Method  Assignment/Initialization  Checking  Function  Interface  Other
+Algorithm/Method                          0                          0         0         0          0     33
+Assignment/Initialization                 0                          0         0         0          0     18
+Checking                                  0                          0         0         0          0     51
+Function                                  0                          0         0         0          0      1
+Interface                                 0                          0         0         0          0      7
+Other                                     0                          0         0         0          0      0
+

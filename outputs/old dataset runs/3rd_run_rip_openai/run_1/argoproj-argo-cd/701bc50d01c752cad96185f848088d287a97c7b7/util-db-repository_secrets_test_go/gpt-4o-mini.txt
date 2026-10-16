@@ -1,0 +1,8 @@
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Incorrect  
+
+Defect Type: Timing  
+Defect Qualifier: Missing  
+
+Defect Type: Algorithm/Method  
+Defect Qualifier: Incorrect

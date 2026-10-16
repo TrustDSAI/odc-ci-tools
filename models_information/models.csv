@@ -1,0 +1,16 @@
+dataset,provider,model,context_window,number_of_executions
+CI tools,openai,gpt-5.4-mini,400000,5
+CI tools,openai,gpt-5.4-nano,400000,5
+CI tools,openai,gpt-5-mini,400000,5
+CI tools,openai,gpt-5-nano,400000,5
+CI tools,openai,gpt-4.1-mini,1047576,5
+CI tools,openai,gpt-4.1-nano,1047576,5
+CI tools,openai,gpt-4o-mini,128000,5
+CI tools,gemini,gemini-3.8-flash,1048576,5
+CI tools,gemini,gemini-3.7-flash,1048576,5
+CI tools,gemini,gemini-3.5-flash,1048576,5
+CI tools,gemini,gemini-3.5-flash-lite,1048576,5
+CI tools,gemini,gemini-3.1-flash-lite,1048576,5
+CI tools,gemini,gemini-2.5-flash-lite,1048576,5
+CI tools,gemini,gemini-2.5-flash,1048576,5
+CI tools,gemini,gemini-2.5-pro,1048576,5

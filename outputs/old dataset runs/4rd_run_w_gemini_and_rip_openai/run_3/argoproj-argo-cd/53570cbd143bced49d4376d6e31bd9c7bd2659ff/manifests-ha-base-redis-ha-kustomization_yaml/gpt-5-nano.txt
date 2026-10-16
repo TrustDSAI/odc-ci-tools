@@ -1,0 +1,12 @@
+Defect Type: Interface
+Defect Qualifier: Extraneous
+Defect Type: Interface
+Defect Qualifier: Extraneous
+Defect Type: Interface
+Defect Qualifier: Extraneous
+Defect Type: Interface
+Defect Qualifier: Extraneous
+Defect Type: Interface
+Defect Qualifier: Missing
+Defect Type: Interface
+Defect Qualifier: Missing

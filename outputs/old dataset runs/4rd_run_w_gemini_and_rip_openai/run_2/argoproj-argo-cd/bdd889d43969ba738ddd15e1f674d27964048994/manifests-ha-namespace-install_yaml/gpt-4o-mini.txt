@@ -1,0 +1,98 @@
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Missing  
+
+Defect Type: Checking  
+Defect Qualifier: Incorrect  
+
+Defect Type: Function  
+Defect Qualifier: Incorrect  
+
+Defect Type: Function  
+Defect Qualifier: Incorrect  
+
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Missing  
+
+Defect Type: Function  
+Defect Qualifier: Incorrect  
+
+Defect Type: Interface  
+Defect Qualifier: Incorrect  
+
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Missing  
+
+Defect Type: Interface  
+Defect Qualifier: Incorrect  
+
+Defect Type: Checking  
+Defect Qualifier: Incorrect  
+
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Missing  
+
+Defect Type: Checking  
+Defect Qualifier: Incorrect  
+
+Defect Type: Function  
+Defect Qualifier: Incorrect  
+
+Defect Type: Checking  
+Defect Qualifier: Incorrect  
+
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Missing  
+
+Defect Type: Checking  
+Defect Qualifier: Incorrect  
+
+Defect Type: Function  
+Defect Qualifier: Incorrect  
+
+Defect Type: Checking  
+Defect Qualifier: Incorrect  
+
+Defect Type: Function  
+Defect Qualifier: Incorrect  
+
+Defect Type: Checking  
+Defect Qualifier: Incorrect  
+
+Defect Type: Interface  
+Defect Qualifier: Incorrect  
+
+Defect Type: Timing  
+Defect Qualifier: Incorrect  
+
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Missing  
+
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Missing  
+
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Missing  
+
+Defect Type: Function  
+Defect Qualifier: Incorrect  
+
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Missing  
+
+Defect Type: Algorithm/Method  
+Defect Qualifier: Incorrect  
+
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Missing  
+
+Defect Type: Function  
+Defect Qualifier: Incorrect  
+
+Defect Type: Function  
+Defect Qualifier: Incorrect  
+
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Missing  
+
+Defect Type: Function  
+Defect Qualifier: Incorrect  

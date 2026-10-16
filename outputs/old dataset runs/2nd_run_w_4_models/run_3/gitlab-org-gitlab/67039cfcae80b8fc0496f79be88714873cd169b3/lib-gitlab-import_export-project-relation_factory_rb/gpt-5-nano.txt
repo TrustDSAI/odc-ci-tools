@@ -1,0 +1,8 @@
+Defect Type: Interface
+Defect Qualifier: Missing
+
+Defect Type: Interface
+Defect Qualifier: Missing
+
+Defect Type: Algorithm/Method
+Defect Qualifier: Incorrect

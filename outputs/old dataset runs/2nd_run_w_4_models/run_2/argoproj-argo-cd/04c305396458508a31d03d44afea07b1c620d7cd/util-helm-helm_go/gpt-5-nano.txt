@@ -1,0 +1,5 @@
+Defect Type: Interface
+Defect Qualifier: Missing
+
+Defect Type: Function
+Defect Qualifier: Extraneous

@@ -1,0 +1,2 @@
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Correctly Implemented

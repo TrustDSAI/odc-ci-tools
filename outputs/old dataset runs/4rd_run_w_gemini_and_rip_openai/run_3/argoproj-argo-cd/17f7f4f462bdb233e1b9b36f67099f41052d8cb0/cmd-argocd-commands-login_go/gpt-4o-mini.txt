@@ -1,0 +1,8 @@
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Incorrect  
+
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Incorrect  
+
+Defect Type: Checking  
+Defect Qualifier: Incorrect  

@@ -1,0 +1,11 @@
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Missing  
+
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Missing  
+
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Missing  
+
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Missing  

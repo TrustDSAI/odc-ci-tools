@@ -1,0 +1,5 @@
+Defect Type: Interface  
+Defect Qualifier: Correct
+
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Correct

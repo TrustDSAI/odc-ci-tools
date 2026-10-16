@@ -1,0 +1,8 @@
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Missing  
+
+Defect Type: Checking  
+Defect Qualifier: Missing  
+
+Defect Type: Interface  
+Defect Qualifier: Missing

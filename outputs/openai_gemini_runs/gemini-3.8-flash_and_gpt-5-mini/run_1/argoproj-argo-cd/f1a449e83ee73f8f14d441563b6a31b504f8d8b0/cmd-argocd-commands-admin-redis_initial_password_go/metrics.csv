@@ -1,0 +1,4 @@
+Model,Elapsed Time (seconds),Prompt Tokens,Response Tokens,Total Tokens
+gpt-5.4-mini,0.737,1285,15,1300
+gemini-3.8-flash,12.896,1500,232,1732
+gpt-5-mini,6.675,1285,1046,2331

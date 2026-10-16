@@ -41,7 +41,8 @@ IGNORED_EXTENSIONS: set[str] = {
     ".min.js", ".map", ".pyc", ".class", ".jar", ".war", 
     ".exe", ".dll", ".so", ".dylib", ".o", ".a",
     # Logs and IDEs
-    ".log", ".iml", ".sln", ".csproj"
+    ".log", ".iml", ".sln", ".csproj",
+    ".yaml", ".yml", ".jelly", ".groovy"
 }
 
 IGNORED_FILENAMES: set[str] = {
@@ -305,6 +306,10 @@ def should_ignore_file(filename: str) -> bool:
     path = PurePosixPath(filename.lower())
 
     if any(part in IGNORED_DIRS for part in path.parts[:-1]):
+        return True
+
+    test_suffixes = ("_test.go", "_spec.rb", "test.ts", "test.js", "spec.js", "spec.ts", "test.py")
+    if filename.lower().endswith(test_suffixes):
         return True
 
     if path.name in IGNORED_FILENAMES:

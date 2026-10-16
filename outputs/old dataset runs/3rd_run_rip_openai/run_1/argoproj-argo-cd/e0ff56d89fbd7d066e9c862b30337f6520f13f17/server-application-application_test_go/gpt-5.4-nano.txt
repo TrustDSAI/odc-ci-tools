@@ -1,0 +1,7 @@
+File: server/application/application_test.go
+
+Defect Type: Function  
+Defect Qualifier: Missing  
+
+Defect Type: Function  
+Defect Qualifier: Incorrect

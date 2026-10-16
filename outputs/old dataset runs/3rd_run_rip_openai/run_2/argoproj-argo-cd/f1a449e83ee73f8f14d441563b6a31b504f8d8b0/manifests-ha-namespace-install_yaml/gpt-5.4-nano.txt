@@ -1,0 +1,11 @@
+Defect Type: Function  
+Defect Qualifier: Missing  
+
+Defect Type: Interface  
+Defect Qualifier: Incorrect  
+
+Defect Type: Algorithm/Method  
+Defect Qualifier: Incorrect  
+
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Missing

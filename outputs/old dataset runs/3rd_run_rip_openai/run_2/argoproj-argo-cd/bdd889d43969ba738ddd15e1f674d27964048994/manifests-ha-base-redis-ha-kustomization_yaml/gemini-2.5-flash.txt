@@ -1,0 +1,4 @@
+Defect Type: Assignment/Initialization
+Defect Qualifier: Extraneous
+Defect Type: Function
+Defect Qualifier: Missing

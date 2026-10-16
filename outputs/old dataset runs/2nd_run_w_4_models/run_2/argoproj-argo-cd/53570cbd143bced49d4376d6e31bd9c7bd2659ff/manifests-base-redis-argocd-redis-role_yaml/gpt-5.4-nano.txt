@@ -1,0 +1,2 @@
+Defect Type: Interface: a problem in the interaction between components (e.g., parameter list).
+Defect Qualifier: Missing: new code needs to be added to fix the defect.

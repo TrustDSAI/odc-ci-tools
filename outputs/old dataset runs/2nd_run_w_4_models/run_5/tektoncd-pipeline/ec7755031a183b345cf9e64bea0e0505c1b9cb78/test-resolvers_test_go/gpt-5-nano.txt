@@ -1,0 +1,5 @@
+Defect Type: Checking
+Defect Qualifier: Missing
+
+Defect Type: Function
+Defect Qualifier: Incorrect

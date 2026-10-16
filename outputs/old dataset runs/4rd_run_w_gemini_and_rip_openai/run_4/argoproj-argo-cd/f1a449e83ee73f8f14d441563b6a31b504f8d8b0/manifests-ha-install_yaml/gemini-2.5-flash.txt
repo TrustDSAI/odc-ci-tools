@@ -1,0 +1,26 @@
+Defect Type: Function
+Defect Qualifier: Missing
+Defect Type: Interface
+Defect Qualifier: Missing
+Defect Type: Algorithm/Method
+Defect Qualifier: Missing
+Defect Type: Algorithm/Method
+Defect Qualifier: Missing
+Defect Type: Algorithm/Method
+Defect Qualifier: Missing
+Defect Type: Function
+Defect Qualifier: Missing
+Defect Type: Algorithm/Method
+Defect Qualifier: Missing
+Defect Type: Checking
+Defect Qualifier: Extraneous
+Defect Type: Function
+Defect Qualifier: Missing
+Defect Type: Function
+Defect Qualifier: Missing
+Defect Type: Function
+Defect Qualifier: Missing
+Defect Type: Function
+Defect Qualifier: Missing
+Defect Type: Function
+Defect

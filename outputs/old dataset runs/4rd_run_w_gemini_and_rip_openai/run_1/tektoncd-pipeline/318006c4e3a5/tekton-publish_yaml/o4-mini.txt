@@ -1,0 +1,7 @@
+File: tekton/publish.yaml (description change)  
+Defect Type: Interface  
+Defect Qualifier: Incorrect  
+
+File: tekton/publish.yaml (added resolvers image)  
+Defect Type: Assignment/Initialization  
+Defect Qualifier: Missing

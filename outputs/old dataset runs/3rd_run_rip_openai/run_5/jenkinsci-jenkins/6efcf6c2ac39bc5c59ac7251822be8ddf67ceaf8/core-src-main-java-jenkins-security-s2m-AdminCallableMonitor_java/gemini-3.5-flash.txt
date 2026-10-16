@@ -1,0 +1,10 @@
+Defect Type: Checking
+    *   Wait, is it "Checking" or "Interface"? I will output "Checking" and "Missing". Let me write it down.
+    *   Wait, let's look at the ODC definition provided in the prompt: "Checking: a problem with conditional logic (e.g., condition in a if-clause or in a loop)". If it's strictly "conditional logic (e.g. if-clause)", then maybe Interface is better? But `@RequirePOST` is conceptually a condition (if request != POST, then error).
+    *   Let's provide:
+        Defect Type: Checking
+        Defect Qualifier: Missing
+
+    Let's double check if there's any other interpretation.
+    Another interpretation: "Interface" because it defines the communication protocol (HTTP POST vs GET) between the client and the server component. But usually, security check bypasses are "Checking". I'll stick with Checking / Missing.Defect Type: Checking
+Defect Qualifier: Missing

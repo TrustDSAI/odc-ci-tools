@@ -1,0 +1,17 @@
+Model,Elapsed Time (seconds),Prompt Tokens,Response Tokens,Total Tokens
+gemini-3.8-flash,2.407,496,75,571
+gemini-3.5-flash,4.809,496,907,1403
+gemini-3.5-flash-lite,0.876,496,11,507
+gemini-3.1-flash-lite,3.618,496,11,507
+gemini-2.5-flash-lite,0.632,496,11,507
+gemini-2.5-flash,7.39,496,1217,1713
+gemini-2.5-pro,11.211,496,1178,1674
+gpt-5.4-mini,1.093,469,15,484
+gpt-5.4-nano,0.505,469,15,484
+gpt-5-mini,2.808,469,341,810
+gpt-5-nano,5.8,469,727,1196
+gpt-4.1-mini,0.751,470,12,482
+gpt-4.1-nano,0.557,470,12,482
+gpt-4o-mini,0.624,470,12,482
+o3-mini,4.78,469,921,1390
+o4-mini,3.544,469,478,947

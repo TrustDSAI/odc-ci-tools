@@ -1,0 +1,12 @@
+Defect Type: Interface  
+Defect Qualifier: Incorrect  
+Defect Type: Checking  
+Defect Qualifier: Incorrect  
+Defect Type: Checking  
+Defect Qualifier: Incorrect  
+Defect Type: Checking  
+Defect Qualifier: Incorrect  
+Defect Type: Checking  
+Defect Qualifier: Incorrect  
+Defect Type: Checking  
+Defect Qualifier: Incorrect
